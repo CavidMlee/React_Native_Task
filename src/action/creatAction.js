@@ -1,9 +1,9 @@
 import { AsyncStorage } from 'react-native';
-import API  from '../../config';
+import API from '../../config';
 export const NewTask = 'NewTask';
 
 
-export const newTask = (title, description, status, priority) => async dispatch => {
+export const newTask = (title, description, status, priority, deadlineAt, callback) => async dispatch => {
     let tokens = await AsyncStorage.getItem('userData');
     let parsed = JSON.parse(tokens);
 
@@ -12,21 +12,22 @@ export const newTask = (title, description, status, priority) => async dispatch 
         title,
         description,
         status: parseInt(status),
-        priority: parseInt(priority),
-        deadlineAt: "",
+        priority: priority,
+        deadlineAt: deadlineAt ? deadlineAt : "",
         willProgressAt: "",
         project: "",
         attachment: ""
     })
-    
+
     if (parsed != null) {
         return API.then(api => api.post(`/tasks`, data
         )).then(resp => {
             if (resp.status == 201) {
                 alert("Success")
+                callback()
                 return dispatch({
                     type: NewTask,
-                    payload: "Success"
+                    payload: resp.data.data
                 })
             }
             else {

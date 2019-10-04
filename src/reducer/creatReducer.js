@@ -1,7 +1,7 @@
 import { NewTask } from '../action/creatAction';
 
 const initialState = {
-    newTask: ''
+    newTask: {}
 };
 
 export default function newTaskReducer(state = initialState, { type, payload }) {

@@ -1,7 +1,7 @@
 import { DeleteTask } from '../action/deleteAction';
 
 const initialState = {
-    deleteTask: ''
+    deleteTask: 0
 };
 
 export default function deleteReducer(state = initialState, { type, payload }) {

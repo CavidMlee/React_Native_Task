@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, AsyncStorage } from 'react-native';
+import { AsyncStorage } from 'react-native';
 import CreatePage from './creatPage.js';
 import { connect } from 'react-redux';
-import { newTask } from '../action/creatAction.js';
+import { newTask } from '../../action/creatAction';
 import NetInfo from '@react-native-community/netinfo';
+import { listTask } from '../../action/listAction';
+import moment from 'moment'
 
 
 class CreatScreen extends React.Component {
@@ -11,8 +13,9 @@ class CreatScreen extends React.Component {
     state = {
         title: '',
         description: '',
-        status: '',
-        priority: '',
+        priority: 0,
+        chosenDate: null,
+        pickerValue: "0"
     }
 
     changeState = (name) => {
@@ -21,10 +24,14 @@ class CreatScreen extends React.Component {
         }
     }
     creatButton = async () => {
-        const { title, description, status, priority } = this.state;
+        const { title, description, pickerValue, priority, chosenDate } = this.state;
+        let deadlineAt = moment(chosenDate).format('YYYY-MM-DD HH:MM:SS').toString();
+
         NetInfo.isConnected.fetch().then(async isConnected => {
             if (isConnected) {
-                await this.props.newTask(title, description, status, priority)
+                await this.props.newTask(title, description, pickerValue, priority, deadlineAt, () => {
+                    this.props.listTask(true)
+                })
             } else {
                 alert("You are offline!");
                 let offline = await AsyncStorage.getItem('offlineData');
@@ -33,8 +40,9 @@ class CreatScreen extends React.Component {
                 {
                     title,
                     description,
-                    status,
-                    priority
+                    pickerValue,
+                    priority,
+                    deadlineAt
                 }
                 let arr = []
                 if (parsed != null) {
@@ -44,24 +52,43 @@ class CreatScreen extends React.Component {
                 AsyncStorage.setItem("offlineData", JSON.stringify(
                     arr
                 ));
-
             }
         });
     }
+
+    setDate = (newDate) => {
+        this.setState({ chosenDate: newDate });
+        if (!newDate) {
+            this.setState((prevstate) => ({ priority: 0 }))
+        }
+    }
+
+    teciliDate = () => {
+        if (!this.state.chosenDate) {
+            this.setState((prevstate) => ({ chosenDate: new Date(), priority: 1}))
+        }
+    }
+
+    picker = (item) => {
+        this.setState({ pickerValue: item })
+    }
+
     render() {
-        let { title, description, status, priority } = this.state
-        //this.props.navigation.state.params.update
-        
+        let { title, description, priority, chosenDate, pickerValue } = this.state
+
         return (
             <CreatePage
                 title={title}
                 description={description}
-                status={status}
-                priority={priority}
                 changeState={this.changeState}
                 creatButton={this.creatButton}
-                storuYoxla={this.storuYoxla}
-                remov={this.remov}
+                setDate={this.setDate}
+                date={chosenDate}
+                teciliDate={this.teciliDate}
+                navigation={this.props.navigation}
+                tecili={priority}
+                picker={this.picker}
+                pickerValue={pickerValue}
             />
         )
     }
@@ -69,13 +96,12 @@ class CreatScreen extends React.Component {
 
 mapStateToProps = (state, props) => ({
     state,
-    create:state.newTaskReducer.newTask
-    
-
+    create: state.newTaskReducer.newTask
 });
 
 mapDispatchToProps = {
     newTask,
+    listTask
 }
 
 

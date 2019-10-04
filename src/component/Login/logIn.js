@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import styles from './loginStyle';
 import { connect } from 'react-redux';
-import { checkEmail, logIn } from '../action/loginAction';
+import { checkEmail, logIn } from '../../action/loginAction';
 import LoginPage from './loginPage';
 
 

@@ -1,17 +1,14 @@
-import { AsyncStorage } from 'react-native';
 import API from '../../config';
 export const DeleteTask = 'DeleteTask';
 
 
-export const deleteTask = (id) => async dispatch => {
-    let tokens = await AsyncStorage.getItem('userData');
-    let parsed = JSON.parse(tokens);
+export const deleteTask = (id,callback) => async dispatch => {
 
     return API.then(api => api.delete(`/tasks/${id}`)).then(() => {
-            alert(`${id} id-li task silindi`)
+            callback()
             return dispatch({
                 type: DeleteTask,
-                payload: `${id} id-li task silindi`
+                payload: id
             })
         }
         ).catch(e => { alert(e) })

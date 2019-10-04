@@ -7,9 +7,8 @@ import {
     AsyncStorage
 } from 'react-native';
 import { connect } from 'react-redux';
-import { signInData } from '../action/signInAction';
+import { signInData } from '../../action/signInAction';
 import SignInPage from './signInPage';
-
 
 
 class SigninScreen extends React.Component {
@@ -21,7 +20,7 @@ class SigninScreen extends React.Component {
         checkEmail: false,
         checkPassword: false,
     }
-   
+
 
     signInButton = () => {
         const { email, password, passwordRepeat } = this.state;
@@ -49,14 +48,14 @@ class SigninScreen extends React.Component {
         }
     };
 
-    rpeatPass = (text)=>{
-        this.setState({passwordRepeat:text})
+    rpeatPass = (text) => {
+        this.setState({ passwordRepeat: text })
     }
 
     render() {
         const { email, password, passwordRepeat, checkEmail, checkPassword } = this.state
-        this.props.user.email ? this.props.navigation.navigate('Main') : null
-        
+        this.props.user.email ? this.props.navigation.navigate('Tabs') : null
+
         return (
             <SignInPage
                 email={email}
@@ -64,11 +63,11 @@ class SigninScreen extends React.Component {
                 passwordRepeat={passwordRepeat}
                 checkEmail={checkEmail}
                 checkPassword={checkPassword}
-                rpeatPass = {this.rpeatPass}
+                rpeatPass={this.rpeatPass}
                 validateEmail={this.validateEmail}
                 validatePassword={this.validatePassword}
                 signInButton={this.signInButton}
-             />
+            />
 
         )
     }

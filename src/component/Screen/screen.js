@@ -1,14 +1,23 @@
 import React from 'react';
 import { Text } from 'react-native';
-import { createStackNavigator, createAppContainer,createSwitchNavigator } from 'react-navigation'
-import LoginScreen from './logIn.js'
-import SigninScreen from './signIn.js'
-import MainScreen from './main'
-import CreatScreen from './creat';
-import EditScreen from './edit'
+import { createStackNavigator, createAppContainer, createSwitchNavigator, createDrawerNavigator } from 'react-navigation'
+import LoginScreen from '../Login/logIn.js'
+import SigninScreen from '../Signup/signIn'
+import MainScreen from '../Main/main'
+import AssignedScreen from '../Assigned/assigned.js';
+import ExpiredScreen from '../Expired/expired'
+import CreatScreen from '../Create/creat';
+import EditScreen from '../Edit/edit'
+import Tabscreen from '../tabs';
 import AuthLoadingScreen from './AuthLoadingScreen'
 
 const AppStack = createStackNavigator({
+  Tabs: {
+    screen: Tabscreen,
+    navigationOptions: {
+      header: null
+    },
+  },
   Main: {
     screen: MainScreen,
     navigationOptions: {
@@ -19,24 +28,28 @@ const AppStack = createStackNavigator({
       headerTintColor: 'black',
     },
   },
+  Assigned: {
+    screen: AssignedScreen,
+    navigationOptions: {
+      header: null
+    },
+  },
+  Expired: {
+    screen: ExpiredScreen,
+    navigationOptions: {
+      header: null
+    },
+  },
   Creat: {
     screen: CreatScreen,
     navigationOptions: {
-      headerTitle: <Text style={{ flex: 1, color: 'white', fontSize: 20, textAlign: 'center', paddingRight: 50 }}>Creat</Text>,
-      headerStyle: {
-        backgroundColor: '#64e291',
-      },
-      headerTintColor: 'black',
+      header: null
     },
   },
   Edit: {
     screen: EditScreen,
     navigationOptions: {
-      headerTitle: <Text style={{ flex: 1, color: 'white', fontSize: 20, textAlign: 'center', paddingRight: 50 }}>Edit</Text>,
-      headerStyle: {
-        backgroundColor: '#64e291',
-      },
-      headerTintColor: 'black',
+      header: null
     },
   }
 });
@@ -55,7 +68,7 @@ const AuthStack = createStackNavigator({
   Signin: {
     screen: SigninScreen,
     navigationOptions: {
-      headerTitle: <Text style={{ flex: 1, color: 'white', fontSize: 20,paddingRight:50, textAlign: 'center' }}>SignUp</Text>,
+      headerTitle: <Text style={{ flex: 1, color: 'white', fontSize: 20, paddingRight: 50, textAlign: 'center' }}>SignUp</Text>,
       headerStyle: {
         backgroundColor: '#64e291',
       },
@@ -64,10 +77,16 @@ const AuthStack = createStackNavigator({
   },
 });
 
+const Drawer = createDrawerNavigator({
+  Tapşırıqlar: {
+    screen: AppStack,
+  }
+});
+
 export default createAppContainer(createSwitchNavigator(
   {
     AuthLoading: AuthLoadingScreen,
-    App: AppStack,
+    App: Drawer,
     Auth: AuthStack,
   },
   {
@@ -75,4 +94,3 @@ export default createAppContainer(createSwitchNavigator(
   }
 ));
 
-  
