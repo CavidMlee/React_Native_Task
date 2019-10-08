@@ -1,4 +1,5 @@
-import { AsyncStorage } from 'react-native';
+//import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { API } from '../../config';
 export const LoginInType = 'LoginInType';
 export const CheckEmailType = 'CheckEmailType';

@@ -1,27 +1,22 @@
-import React,{useState} from 'react';
+import React, { useState } from 'react';
 import {
     View,
     Text,
-    TouchableOpacity,
-    Alert,
-    FlatList,
-    AsyncStorage,
-    ScrollView,
-    SafeAreaView
-} from 'react-native'
+} from 'react-native';
 import { CheckBox, Icon } from 'native-base';
 import styles from './assignedStyle';
 import { connect } from 'react-redux';
-import Header from './assignedHeader';
+import Header from '../Header/header'
 
 
 
 const AssignedScreen = (props) => {
     const [num, setNum] = useState(0);
 
-    dataStatus = (text) => {
-        setNum(parseInt(text)); 
+    dataStatus = (number) => {
+        setNum(number);
     }
+    console.log('assigned')
     return (
         <View style={styles.assignedView}>
 
@@ -29,6 +24,9 @@ const AssignedScreen = (props) => {
                 <Header
                     list={[]}
                     dataStatus={this.dataStatus}
+                    novbede={[0, "Növbədə"]}
+                    icrada={[0, "Icrada"]}
+                    bagli={[0, "Bağlı"]}
                 />
             </View>
             <View style={styles.emptyIcons}>
@@ -41,7 +39,7 @@ const AssignedScreen = (props) => {
 
 
 mapStateToProps = (state, props) => ({
-
+    page2: state.tabsReducer.tabsPage2,
 });
 
 mapDispatchToProps = {

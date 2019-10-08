@@ -44,18 +44,26 @@ export default styles = {
     },
     text:{
         color:"white",
-        fontSize:16
+        fontSize:16,
+        alignSelf: 'stretch',
+        textAlign: 'center',
     },
     text1:{
         color:"orange",
-        fontSize:16
+        fontSize:16,
+        alignSelf: 'stretch',
+        textAlign: 'center',
     },
     text2:{
         color:"#0288D1",
-        fontSize:16
+        fontSize:16,
+        alignSelf: 'stretch',
+        textAlign: 'center',
     },
     text3:{
         color:"#7BC5AF",
-        fontSize:16
+        fontSize:16,
+        alignSelf: 'stretch',
+        textAlign: 'center',
     },
 }

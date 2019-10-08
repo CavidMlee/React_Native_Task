@@ -1,8 +1,8 @@
 //export const API = "https://devcore.prospectsmb.com/v1";
 
 import axios from 'axios';
-import { AsyncStorage } from 'react-native';
-
+//import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default instance = new Promise(async (resolve, reject) => {
 

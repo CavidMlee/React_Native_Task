@@ -1,79 +1,76 @@
-import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import React, { useState,useEffect } from 'react';
 import { connect } from 'react-redux';
 import { getTask, editTask } from '../../action/editAction';
-import EditPage from './editPage';
+import EditPage from './component/editPage';
 import { listTask } from '../../action/listAction';
+import { listDelayTask } from '../../action/listDelayAction';
 import moment from 'moment'
 
-class EditScreen extends Component {
-    constructor(props) {
-        super(props);
-        let item = this.props.navigation.getParam('item')
-        this.state = {
-            id: item.id,
-            title: item.title,
-            description: item.description,
-            priority: item.priority,
-            chosenDate: item.deadlineAt,
-            pickerValue: item.status + ''
-        }
-    }
+const EditScreen = (props) => {
+
+    let item = props.navigation.getParam('item')
+
+    const [id , setId] = useState(item.id)
+    const [values, setValues] = useState({ title: item.title, description: item.description })
+    const [priority, setPriority] = useState(item.priority)
+    const [chosenDate, setChosenDate] = useState(item.deadlineAt)
+    const [pickerValue, setPickerValue] = useState(item.status + '')
 
 
     changeState = (name) => {
         return (text) => {
-            this.setState({ [name]: text })
+            setValues({ ...values, [name]: text })
         }
-    };
+    }
+
 
     editButton = () => {
-        const { id, title, description, pickerValue, priority,chosenDate } = this.state;
+        const {  title, description} = values;
         let deadlineAt = moment(chosenDate).format('YYYY-MM-DD HH:MM:SS').toString();
 
-        this.props.editTask(id, title, description, pickerValue, priority,deadlineAt, () => {
-            this.props.listTask(true)
-            this.props.navigation.goBack()
+        props.editTask(id, title, description, pickerValue, priority, deadlineAt, () => {
+            props.listTask(true)
+            props.listDelayTask(true)
+            props.navigation.goBack()
         })
     };
 
     setDate = (newDate) => {
-        this.setState({ chosenDate: newDate });
+        setChosenDate(newDate)
         if (!newDate) {
-            this.setState((prevstate) => ({ priority: 0 }))
+            setPriority(0)
         }
     };
 
     teciliDate = () => {
-        if (!this.state.chosenDate) {
-            this.setState((prevstate) => ({ chosenDate: new Date(), priority: 1 }))
+        if (chosenDate) {
+            setChosenDate(new Date ())
+            setPriority(1)
         }
 
     };
 
     picker = (item) => {
-        this.setState({ pickerValue: item })
+        setPickerValue(item)
     };
 
-    render() {
-        let { title, description, priority, chosenDate, pickerValue } = this.state
+        let { title, description } = values
         return (
-                <EditPage
-                    editButton={this.editButton}
-                    title={title}
-                    description={description}
-                    changeState={this.changeState}
-                    setDate={this.setDate}
-                    date={chosenDate}
-                    teciliDate={this.teciliDate}
-                    navigation={this.props.navigation}
-                    tecili={priority}
-                    picker={this.picker}
-                    pickerValue={pickerValue}
-                />
+            <EditPage
+                editButton={editButton}
+                title={title}
+                description={description}
+                changeState={changeState}
+                setDate={setDate}
+                date={chosenDate}
+                teciliDate={teciliDate}
+                navigation={props.navigation}
+                tecili={priority}
+                picker={picker}
+                pickerValue={pickerValue}
+            />
         )
     }
-};
 
 mapStateToProps = (state, props) => ({
     task: state.editReducer.getTask,
@@ -84,7 +81,8 @@ mapStateToProps = (state, props) => ({
 mapDispatchToProps = {
     getTask,
     editTask,
-    listTask
+    listTask,
+    listDelayTask
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditScreen);

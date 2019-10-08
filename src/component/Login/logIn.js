@@ -1,57 +1,56 @@
-import React, { Fragment } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-    StyleSheet,
     View,
     Text,
-    TextInput,
     TouchableOpacity,
-    AsyncStorage
 } from 'react-native';
-import styles from './loginStyle';
+import AsyncStorage from '@react-native-community/async-storage';
+import styles from './component/loginStyle';
 import { connect } from 'react-redux';
 import { checkEmail, logIn } from '../../action/loginAction';
-import LoginPage from './loginPage';
+import LoginPage from './component/loginPage';
 
 
-class LoginScreen extends React.Component {
-    state = {
-        email: '',
-        password: ''
-    }
+const LoginScreen = (props) => {
+
+    const [values, setValues] = useState({ email: '', password: '' })
 
     changeState = (name) => {
         return (text) => {
-            this.setState({ [name]: text })
+            setValues({ ...values, [name]: text })
         }
     }
 
-    componentDidUpdate = async () =>{
+    useEffect(() => {
+        userData()
+    })
+
+    userData = async () => {
         const userData = await AsyncStorage.getItem('userData');
-        userData ? this.props.navigation.navigate('App'):null
+        userData ? this.props.navigation.navigate('App') : null
     }
 
-    render() {
-        const { check, checkEmail, logIn } = this.props;
-        const { email, password } = this.state;
-        return (
-            <View>
-                <LoginPage
-                    email={email}
-                    password={password}
-                    check={check}
-                    checkEmail={checkEmail}
-                    logIn={logIn}
-                    changeState={this.changeState}
-                />
-                <View style={styles.signİn}>
-                    <TouchableOpacity onPress={() => { this.props.navigation.navigate('Signin') }} >
-                        <Text style={styles.signİnText}>SignUp</Text>
-                    </TouchableOpacity>
-                </View>
+    const { check, checkEmail, logIn } = props;
+    const { email, password } = values;
+    return (
+        <View>
+            <LoginPage
+                email={email}
+                password={password}
+                check={check}
+                checkEmail={checkEmail}
+                logIn={logIn}
+                changeState={changeState}
+            />
+            <View style={styles.signİn}>
+                <TouchableOpacity onPress={() => { props.navigation.navigate('Signup') }} >
+                    <Text style={styles.signİnText}>SignUp</Text>
+                </TouchableOpacity>
             </View>
-        )
-    }
-};
+        </View>
+    )
+}
+
 
 mapStateToProps = (state, props) => ({
     check: state.loginReducer.check,

@@ -1,36 +1,37 @@
-import React from 'react';
-import { AsyncStorage } from 'react-native';
-import CreatePage from './creatPage.js';
+import React,{useState,useEffect} from 'react';
+//import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
+import CreatePage from './component/creatPage.js';
 import { connect } from 'react-redux';
 import { newTask } from '../../action/creatAction';
 import NetInfo from '@react-native-community/netinfo';
 import { listTask } from '../../action/listAction';
+import { listDelayTask } from '../../action/listDelayAction';
 import moment from 'moment'
 
 
-class CreatScreen extends React.Component {
+const CreatScreen = (props) => {
 
-    state = {
-        title: '',
-        description: '',
-        priority: 0,
-        chosenDate: null,
-        pickerValue: "0"
-    }
+    const [values, setValues] = useState({title: '', description: ''})
+    const [priority, setPriority] = useState(0)
+    const [chosenDate, setChosenDate] = useState(null)
+    const [pickerValue, setPickerValue] = useState('0')
+
 
     changeState = (name) => {
         return (text) => {
-            this.setState({ [name]: text })
+            setValues({...values, [name]: text})
         }
     }
     creatButton = async () => {
-        const { title, description, pickerValue, priority, chosenDate } = this.state;
+        const { title, description} = values
         let deadlineAt = moment(chosenDate).format('YYYY-MM-DD HH:MM:SS').toString();
 
         NetInfo.isConnected.fetch().then(async isConnected => {
             if (isConnected) {
-                await this.props.newTask(title, description, pickerValue, priority, deadlineAt, () => {
-                    this.props.listTask(true)
+                await props.newTask(title, description, pickerValue, priority, deadlineAt, () => {
+                    props.listTask(true)
+                    props.listDelayTask(true)
                 })
             } else {
                 alert("You are offline!");
@@ -57,42 +58,40 @@ class CreatScreen extends React.Component {
     }
 
     setDate = (newDate) => {
-        this.setState({ chosenDate: newDate });
+        setChosenDate(newDate)
         if (!newDate) {
-            this.setState((prevstate) => ({ priority: 0 }))
+            setPriority(0)
         }
     }
 
     teciliDate = () => {
-        if (!this.state.chosenDate) {
-            this.setState((prevstate) => ({ chosenDate: new Date(), priority: 1}))
+        if (!chosenDate) {
+            setChosenDate(new Date())
+            setPriority(1)
         }
     }
 
     picker = (item) => {
-        this.setState({ pickerValue: item })
+        setPickerValue(item)
     }
 
-    render() {
-        let { title, description, priority, chosenDate, pickerValue } = this.state
-
+        let { title, description} = values
         return (
             <CreatePage
                 title={title}
                 description={description}
-                changeState={this.changeState}
-                creatButton={this.creatButton}
-                setDate={this.setDate}
+                changeState={changeState}
+                creatButton={creatButton}
+                setDate={setDate}
                 date={chosenDate}
-                teciliDate={this.teciliDate}
-                navigation={this.props.navigation}
+                teciliDate={teciliDate}
+                navigation={props.navigation}
                 tecili={priority}
-                picker={this.picker}
+                picker={picker}
                 pickerValue={pickerValue}
             />
         )
     }
-}
 
 mapStateToProps = (state, props) => ({
     state,
@@ -101,7 +100,9 @@ mapStateToProps = (state, props) => ({
 
 mapDispatchToProps = {
     newTask,
-    listTask
+    listTask,
+    listDelayTask
+
 }
 
 

@@ -1,8 +1,9 @@
-import { AsyncStorage } from 'react-native';
+//import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import API from '../../config';
-export const SignInDataType = 'SignInDataType';
+export const SignUpDataType = 'SignUpDataType';
 
-export const signInData = (email, password, passwordRepeat) => dispatch => {
+export const signUpData = (email, password, passwordRepeat) => dispatch => {
     console.log(email, password, passwordRepeat)
     return API.then(api => api.post(`/register`,
         JSON.stringify({
@@ -17,7 +18,7 @@ export const signInData = (email, password, passwordRepeat) => dispatch => {
                 let datas = resp.data.data
                 AsyncStorage.setItem("userData", JSON.stringify(datas));
                 return dispatch({
-                    type: SignInDataType,
+                    type: SignUpDataType,
                     payload: datas
                 })
             } else {

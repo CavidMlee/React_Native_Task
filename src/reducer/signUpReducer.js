@@ -1,12 +1,12 @@
-import { SignInDataType } from '../action/signInAction.js';
+import { SignUpDataType } from '../action/signUpAction.js';
 
 const initialState = {
     user: {}
 };
 
-export default function signInReducer(state = initialState, { type, payload }) {
+export default function signUpReducer(state = initialState, { type, payload }) {
     switch (type) {
-        case SignInDataType:
+        case SignUpDataType:
             return {
                 ...state,
                 user: payload

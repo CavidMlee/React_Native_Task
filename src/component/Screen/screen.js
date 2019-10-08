@@ -2,13 +2,13 @@ import React from 'react';
 import { Text } from 'react-native';
 import { createStackNavigator, createAppContainer, createSwitchNavigator, createDrawerNavigator } from 'react-navigation'
 import LoginScreen from '../Login/logIn.js'
-import SigninScreen from '../Signup/signIn'
+import SignupScreen from '../Signup/signUp'
 import MainScreen from '../Main/main'
 import AssignedScreen from '../Assigned/assigned.js';
 import ExpiredScreen from '../Expired/expired'
 import CreatScreen from '../Create/creat';
 import EditScreen from '../Edit/edit'
-import Tabscreen from '../tabs';
+import Tabscreen from '../Tabs/tabs';
 import AuthLoadingScreen from './AuthLoadingScreen'
 
 const AppStack = createStackNavigator({
@@ -65,8 +65,8 @@ const AuthStack = createStackNavigator({
       headerTintColor: 'black',
     },
   },
-  Signin: {
-    screen: SigninScreen,
+  Signup: {
+    screen: SignupScreen,
     navigationOptions: {
       headerTitle: <Text style={{ flex: 1, color: 'white', fontSize: 20, paddingRight: 50, textAlign: 'center' }}>SignUp</Text>,
       headerStyle: {

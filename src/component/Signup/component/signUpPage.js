@@ -5,9 +5,9 @@ import {
     TextInput,
     TouchableOpacity,
 } from 'react-native';
-import styles from './signInstyle.js'
+import styles from './signUpstyle.js'
 
-const SignInPage = (props) => {
+const SignUpPage = (props) => {
     return (
         <View>
             <View style={styles.borderstyle11}>
@@ -57,7 +57,7 @@ const SignInPage = (props) => {
                 : null}
 
             <View style={styles.borderstyle11}>
-                <TouchableOpacity style={styles.buttonContent} onPress={() => props.signInButton()} disabled={props.checkEmail ? props.checkPassword ? false : true : true}  >
+                <TouchableOpacity style={styles.buttonContent} onPress={() => props.signUpButton()} disabled={props.checkEmail ? props.checkPassword ? false : true : true}  >
                     <Text style={styles.buttonText}>DAVAM ET</Text>
                 </TouchableOpacity>
             </View>
@@ -65,4 +65,4 @@ const SignInPage = (props) => {
     )
 }
 
-export default SignInPage
+export default SignUpPage
