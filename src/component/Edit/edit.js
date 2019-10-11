@@ -1,10 +1,11 @@
 import React, { useState,useEffect } from 'react';
 import { connect } from 'react-redux';
 import { getTask, editTask } from '../../action/editAction';
-import EditPage from './component/editPage';
+import EditPage from '../Components/inputComponent/inputComponent.js'
 import { listTask } from '../../action/listAction';
 import { listDelayTask } from '../../action/listDelayAction';
-import moment from 'moment'
+import moment from 'moment';
+import useNetworkStatus from '../Hooks/useNetworkStatus';
 
 const EditScreen = (props) => {
 
@@ -14,8 +15,9 @@ const EditScreen = (props) => {
     const [values, setValues] = useState({ title: item.title, description: item.description })
     const [priority, setPriority] = useState(item.priority)
     const [chosenDate, setChosenDate] = useState(item.deadlineAt)
-    const [pickerValue, setPickerValue] = useState(item.status + '')
+    const [pickerValue, setPickerValue] = useState(item.status)
 
+    const networkStatus = useNetworkStatus();
 
     changeState = (name) => {
         return (text) => {
@@ -25,6 +27,7 @@ const EditScreen = (props) => {
 
 
     editButton = () => {
+        if(networkStatus){
         const {  title, description} = values;
         let deadlineAt = moment(chosenDate).format('YYYY-MM-DD HH:MM:SS').toString();
 
@@ -33,6 +36,10 @@ const EditScreen = (props) => {
             props.listDelayTask(true)
             props.navigation.goBack()
         })
+    }
+    else{
+        alert("You are offline!")
+    }
     };
 
     setDate = (newDate) => {
@@ -57,7 +64,9 @@ const EditScreen = (props) => {
         let { title, description } = values
         return (
             <EditPage
-                editButton={editButton}
+                headerTitle={"Düzəliş"}
+                headerButtonTitle={"Düzəliş"}
+                button={editButton}
                 title={title}
                 description={description}
                 changeState={changeState}

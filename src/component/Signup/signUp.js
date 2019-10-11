@@ -1,8 +1,14 @@
 import React,{useState,useEffect} from 'react';
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { connect } from 'react-redux';
 import { signUpData } from '../../action/signUpAction';
-import SignUpPage from './component/signUpPage';
+import styles from './signUpstyle'
 
 
 const SignUpScreen = (props) => {
@@ -51,19 +57,60 @@ const SignUpScreen = (props) => {
         setPasswordRepeat(text)
     }
 
-        
         return (
-            <SignUpPage
-                email={email}
-                password={password}
-                passwordRepeat={passwordRepeat}
-                checkEmail={checkEmail}
-                checkPassword={checkPassword}
-                rpeatPass={rpeatPass}
-                validateEmail={validateEmail}
-                validatePassword={validatePassword}
-                signUpButton={signUpButton}
-            />
+            <View>
+            <View style={styles.borderstyle11}>
+                <View style={styles.inputView}>
+                    <Text style={styles.labelStyle}>
+                        EMAİL
+                        </Text>
+                    <TextInput
+                        keyboardType="email-address"
+                        autoCorrect={false}
+                        value={email}
+                        onChangeText={(text) => validateEmail(text)}
+                        style={[styles.inputStyle, { color:checkEmail ? "black" : "red", }]}
+                    />
+                </View>
+            </View>
+            {checkEmail ? <View>
+                <View style={styles.borderstyle11}>
+                    <View style={styles.inputView}>
+                        <Text style={styles.labelStyle}>
+                            ŞİFRƏ
+                        </Text>
+                        <TextInput
+                            secureTextEntry={true}
+                            autoCorrect={false}
+                            value={password}
+                            onChangeText={(text) =>validatePassword(text)}
+                            style={[styles.inputStyle, { color:checkPassword ? "black" : "red" }]}
+                        />
+                    </View>
+                </View>
+                <View style={styles.borderstyle11}>
+                    <View style={styles.inputView}>
+                        <Text style={styles.labelStyle}>
+                            TƏKRAR ŞİFRƏ
+                        </Text>
+                        <TextInput
+                            secureTextEntry={true}
+                            autoCorrect={false}
+                            value={passwordRepeat}
+                            onChangeText={(passwordRepeat) => rpeatPass(passwordRepeat)}
+                            style={styles.inputStyle}
+                        />
+                    </View>
+                </View>
+            </View>
+                : null}
+
+            <View style={styles.borderstyle11}>
+                <TouchableOpacity style={styles.buttonContent} onPress={() => signUpButton()} disabled={checkEmail ?checkPassword ? false : true : true}  >
+                    <Text style={styles.buttonText}>DAVAM ET</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
 
         )
     }

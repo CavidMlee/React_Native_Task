@@ -7,7 +7,6 @@ export const ListTask = 'ListTask';
 export const listTask = (internet) => async dispatch => {
     if (internet) {
         return API.then(api => api.get(`/tasks`).then(list => {
-                console.log(list)
                 if (list.status == 200) {
                     AsyncStorage.setItem("taskList", JSON.stringify(list.data));
                 }

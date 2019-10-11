@@ -9,7 +9,6 @@ export const listDelayTask = (internet) => async dispatch => {
         return API.then(api => api.get(`/tasks/delayed`).then(list => {
                console.log("List Delay ",list)
                 if (list.status == 200) {
-                    console.log("list Delay status 200")
                     AsyncStorage.setItem("taskDelayList", JSON.stringify(list.data));
                 }
                 else {

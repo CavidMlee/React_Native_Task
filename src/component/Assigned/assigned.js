@@ -22,8 +22,7 @@ const AssignedScreen = (props) => {
 
             <View style={styles.header}>
                 <Header
-                    list={[]}
-                    dataStatus={this.dataStatus}
+                    dataStatus={dataStatus}
                     novbede={[0, "Növbədə"]}
                     icrada={[0, "Icrada"]}
                     bagli={[0, "Bağlı"]}
@@ -42,10 +41,5 @@ mapStateToProps = (state, props) => ({
     page2: state.tabsReducer.tabsPage2,
 });
 
-mapDispatchToProps = {
 
-
-}
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(AssignedScreen);
+export default connect(mapStateToProps,{})(AssignedScreen);

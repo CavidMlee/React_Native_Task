@@ -1,28 +1,59 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, TextInput, KeyboardAvoidingView, SafeAreaView, ScrollView, Picker } from 'react-native';
-import styles from './creatStyle.js'
-import { Container, Header, Left, Right, Button, Icon, Body, Title } from 'native-base';
+import { View, Text, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, Picker } from 'react-native';
+import styles from './inputComponentStyle.js'
+import { Icon, } from 'native-base';
 import DatePicker from 'react-native-datepicker'
+import Header from '../header.js';
+import ImagePicker from 'react-native-image-picker';
+import RNFetchBlob from 'rn-fetch-blob'
 
-const CreatPage = (props) => {
+const options = {
+    title: 'Select Avatar',
+    quality: 1.0,
+    maxWidth: 500,
+    maxHeight: 500,
+    customButtons: [],
+    storageOptions: {
+        skipBackup: true,
+        path: 'images',
+    },
+};
+
+const inputComponent = (props) => {
+
+    selectImage = () => {
+        ImagePicker.showImagePicker(options, (response) => {
+            console.log('Response = ', response);
+            console.log(RNFetchBlob.wrap(response.path))
+            props.uploadImg(response)
+
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+            } else {
+                const source = { uri: response.uri };
+
+                // You can also display the image using data:
+                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+                //   this.setState({
+                //     avatarSource: source,
+                //   });
+            }
+        });
+    }
+
     return (
         <View style={styles.backGroundView}>
-            <Header hasTabs androidStatusBarColor='#46a085' style={{ backgroundColor: '#7BC5AF' }}>
-                <Left>
-                    <Button transparent onPress={() => props.navigation.goBack()}>
-                        <Icon name="arrow-round-back" />
-                    </Button>
-                </Left>
-                <Body>
-                    <Title>Yeni tapşırıq</Title>
-                </Body>
-                <Right>
-                    <Button transparent onPress={() => props.creatButton()}>
-                        <Text style={styles.headerAdd}>Əlavə edin</Text>
-                    </Button>
-                </Right>
-            </Header>
-
+            <Header
+                navigation={props.navigation}
+                headerTitle={props.headerTitle}
+                button={props.button}
+                headerButtonTitle={props.headerButtonTitle}
+            />
             <ScrollView keyboardShouldPersistTaps="handled">
                 <KeyboardAvoidingView behavior='padding' style={{ flex: 1 }}>
                     <View style={styles.inputCard}>
@@ -52,7 +83,7 @@ const CreatPage = (props) => {
                                 onChangeText={props.changeState("description")}
                             />
                             <View style={styles.viewPhoteVoice}>
-                                <TouchableOpacity style={styles.iconButton}>
+                                <TouchableOpacity style={styles.iconButton} onPress={()=>selectImage()} >
                                     <Icon name="camera" style={{ color: '#0288D1' }} />
                                 </TouchableOpacity>
                                 <TouchableOpacity>
@@ -116,15 +147,16 @@ const CreatPage = (props) => {
                                 onValueChange={(itemValue, itemIndex) =>
                                     props.picker(itemValue)
                                 }>
-                                <Picker.Item label="Növbədə" value="0" />
-                                <Picker.Item label="İcrada" value="1" />
-                                <Picker.Item label="Bağlı" value="2" />
+                                <Picker.Item label="Növbədə" value={0} />
+                                <Picker.Item label="İcrada" value={1} />
+                                <Picker.Item label="Bağlı" value={2} />
                             </Picker>
                         </View>
                     </View>
                 </KeyboardAvoidingView>
             </ScrollView>
         </View>
+
     )
 }
-export default CreatPage;
+export default inputComponent;

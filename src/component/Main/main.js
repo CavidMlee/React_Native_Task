@@ -1,13 +1,15 @@
-import React, { useState, useEffect,useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
     View,
     Text,
     TouchableOpacity,
     FlatList,
-    SafeAreaView
+    SafeAreaView,
+    PanResponder,
+    Animated,
+    Dimensions
 } from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage';
-import NetInfo from '@react-native-community/netinfo';
 import ActionSheet from 'react-native-actionsheet'
 import styles from './mainstyle';
 import { connect } from 'react-redux';
@@ -18,10 +20,12 @@ import { deleteTask } from '../../action/deleteAction';
 import { newTask } from '../../action/creatAction.js';
 import { checkEmail } from '../../action/loginAction';
 import Header from '../Header/header';
-import RenderComponent from '../renderComponent';
-import Empty from '../emptyComponent';
+import RenderComponent from '../Components/renderComponent';
+import Empty from '../Components/emptyComponent';
+import useNetworkStatus from '../Hooks/useNetworkStatus';
 
-
+let Window = Dimensions.get('window');
+let panResponder = null
 let actionItem = null
 const options = [
     <Text style={{ color: 'red' }}>İmtina</Text>,
@@ -33,15 +37,28 @@ const MainScreen = (props) => {
 
     const [num, setNum] = useState(0);
     const [refreshing, setRefreshing] = useState(false);
-    const [connect, setConnect] = useState(true);
+    const [pan, setPan] = useState(new Animated.ValueXY())
+
+    const networkStatus = useNetworkStatus()
+    const status = useCallback(() => { networkStatus }, [networkStatus])
 
 
     useEffect(() => {
-        NetInfo.isConnected.addEventListener('connectionChange', handleConnectivityChange);
-        return () => {
-            NetInfo.isConnected.removeEventListener('connectionChange', handleConnectivityChange);
-        };
-    }, []);
+        panResponder = PanResponder.create({
+            onStartShouldSetPanResponder: () => true,
+            onPanResponderMove: Animated.event([null, {
+                dx: pan.x,
+                dy: pan.y
+            }]),
+            onPanResponderRelease: (e, gesture) => {
+                Animated.spring(
+                    pan,
+                    { toValue: { x: 0, y: 0 } }
+                ).start();
+            }
+        });
+        networkChangeStatus()
+    }, [status]);
 
     //log out
     signOutAsync = async () => {
@@ -50,29 +67,29 @@ const MainScreen = (props) => {
         props.checkEmail('logOut')
     };
 
-    //Interneti yoxlayir
-    handleConnectivityChange = async isConnected => {
-        if (isConnected) {
-            setConnect(true)
-            props.listTask(isConnected)
-            props.listDelayTask(isConnected)
+    //Internet
+    networkChangeStatus = async () => {
+        if (networkStatus) {
+            props.listTask(networkStatus)
+            props.listDelayTask(networkStatus)
 
             let offline = await AsyncStorage.getItem('offlineData');
             let parsed = JSON.parse(offline);
 
             if (parsed != null) {
                 let mapData = parsed.map((item) => {
-                    console.log(item)
-                    props.newTask(item.title, item.description, item.status, item.priority)
+                    props.newTask(item.title, item.description, item.pickerValue, item.priority, item.deadlineAt, () => {
+                        props.listTask(true)
+                        props.listDelayTask(true)
+                    })
                 })
                 Promise.all(mapData).then(() => {
                     AsyncStorage.removeItem("offlineData")
                 })
             }
         } else {
-            setConnect(false)
-            props.listTask(isConnected)
-            props.listDelayTask(isConnected)
+            props.listTask(networkStatus)
+            props.listDelayTask(networkStatus)
         }
     }
 
@@ -82,10 +99,13 @@ const MainScreen = (props) => {
                 props.navigation.navigate('Edit', { item: items })
                 break;
             case 2:
-                props.deleteTask(items.id, () => {
-                    props.listTask(true)
-                    props.listDelayTask(true)
-                })
+                networkStatus ?
+                    props.deleteTask(items.id, () => {
+                        props.listTask(true)
+                        props.listDelayTask(true)
+                    })
+                    :
+                    alert("You are Offline!")
                 break;
             default:
                 break;
@@ -93,7 +113,7 @@ const MainScreen = (props) => {
     }
 
     onRefresh = () => {
-        connect ? props.listTask(true) : alert('No internet connection')
+        networkStatus ? props.listTask(true) : alert('No internet connection')
     }
 
     //actionsheet
@@ -104,66 +124,60 @@ const MainScreen = (props) => {
     }
 
     renderItem = ({ item, index }) => {
-        console.log('flatlist update')
         return (
-            <RenderComponent
-                item={item}
-                showActionSheet={showActionSheet}
-                editTask={props.editTask}
-                listTask={props.listTask}
-            />
+            <Animated.View
+                {...panResponder.panHandlers}
+                style={[pan.getLayout()]}>
+                <RenderComponent
+                    item={item}
+                    showActionSheet={showActionSheet}
+                    editTask={props.editTask}
+                    listTask={props.listTask}
+                />
+            </Animated.View>
         )
     }
 
     dataStatus = (number) => {
         setNum(number)
     }
-        console.log('main seifesi')
-        let { list } = props
-        let actionSheet = useRef(null);
-        return (
-            <View style={styles.main}>
-                <View style={{ flex: 1 }}>
-                    <TouchableOpacity onPress={signOutAsync}><Text>Log out</Text></TouchableOpacity>
-                    <View style={styles.header}>
-                        <Header
-                            list={list}
-                            dataStatus={dataStatus}
-                            novbede={[list.length > 0 ? list[0].count : 0, "Növbədə"]}
-                            icrada={[list.length > 0 ? list[1].count : 0, "Icrada"]}
-                            bagli={[list.length > 0 ? list[2].count : 0, "Bağlı"]}
-                        />
-                    </View>
-                    <SafeAreaView style={{ flex: 1 }}>
-                        {list.length > 0
-                            ?
-                            list[num].data.length > 0 ?
-                                <FlatList
-                                    data={list[num].data}
-                                    extraData={props.list}
-                                    renderItem={renderItem}
-                                    refreshing={refreshing}
-                                    onRefresh={onRefresh}
-                                    keyExtractor={(item, index) => index.toString()}
-                                />
-                                :
-                                <Empty />
-                            :
-                            <Empty />
-                        }
-                    </SafeAreaView>
-
+    console.log('main seifesi')
+    let { list } = props
+    let actionSheet = useRef(null);
+    return (
+        <View style={styles.main}>
+            <View style={{ flex: 1 }}>
+                <TouchableOpacity onPress={signOutAsync}><Text>Log out</Text></TouchableOpacity>
+                <View style={styles.header}>
+                    <Header
+                        dataStatus={dataStatus}
+                        novbede={[list.length > 0 ? list[0].count : 0, "Növbədə"]}
+                        icrada={[list.length > 0 ? list[1].count : 0, "Icrada"]}
+                        bagli={[list.length > 0 ? list[2].count : 0, "Bağlı"]}
+                    />
                 </View>
-                <ActionSheet
-                    ref={r => actionSheet = r}
-                    title={null}
-                    options={options}
-                    cancelButtonIndex={0}
-                    destructiveButtonIndex={4}
-                    onPress={(index) => actionTask(index, actionItem)}
-                />
+                <SafeAreaView style={{ flex: 1 }}>
+                    <FlatList
+                        data={list.length > 0 ? list[num].data : []}
+                        extraData={props.list}
+                        renderItem={renderItem}
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        keyExtractor={(item, index) => index.toString()}
+                        ListEmptyComponent={Empty}
+                    />
+                </SafeAreaView>
             </View>
-        )
+            <ActionSheet
+                ref={r => actionSheet = r}
+                title={null}
+                options={options}
+                cancelButtonIndex={0}
+                destructiveButtonIndex={4}
+                onPress={(index) => actionTask(index, actionItem)}
+            />
+        </View>
+    )
 
 }
 

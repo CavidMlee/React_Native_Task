@@ -4,7 +4,7 @@ import {
     Text,
     TouchableOpacity,
 } from 'react-native'
-import styles from './Main/mainstyle';
+import styles from '../Main/mainstyle';
 import moment from 'moment';
 import { CheckBox, Icon } from 'native-base';
 import AsyncStorage from '@react-native-community/async-storage';

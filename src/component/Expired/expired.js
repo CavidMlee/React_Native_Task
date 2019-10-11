@@ -14,8 +14,8 @@ import { editTask } from '../../action/editAction';
 import { deleteTask } from '../../action/deleteAction';
 import { newTask } from '../../action/creatAction.js';
 import Header from '../Header/header'
-import RenderComponent from '../renderComponent'
-import Empty from '../emptyComponent';
+import RenderComponent from '../Components/renderComponent'
+import Empty from '../Components/emptyComponent';
 
 let actionItem = null
 const options = [
@@ -70,37 +70,29 @@ const ExpiredScreen = (props) => {
         setNum(number)
     }
 
-
     console.log('expired seifesi')
+    const { listDelay } = props;
     return (
         <View style={styles.main}>
             <View style={{ flex: 1 }}>
                 <View style={styles.header}>
                     <Header
-                        list={[]}
-                        dataStatus={this.dataStatus}
+                        dataStatus={dataStatus}
                         novbede={[null, "Bir həftə"]}
                         icrada={[null, "Bir ay"]}
                         bagli={[null, "Bir aydan çox"]}
                     />
                 </View>
                 <SafeAreaView style={{ flex: 1 }}>
-                    {props.listDelay.length > 0
-                        ?
-                        props.listDelay[num].data.length > 0 ?
-                            <FlatList
-                                data={props.listDelay[num].data}
-                                extraData={props.listDelay}
-                                renderItem={renderItem}
-                                refreshing={refreshing}
-                                onRefresh={onRefresh}
-                                keyExtractor={(item, index) => index.toString()}
-                            />
-                            :
-                            <Empty />
-                        :
-                        <Empty />
-                    }
+                    <FlatList
+                        data={listDelay.length > 0 ? listDelay[num].data : []}
+                        extraData={props.listDelay}
+                        renderItem={renderItem}
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        keyExtractor={(item, index) => index.toString()}
+                        ListEmptyComponent={Empty}
+                    />
                 </SafeAreaView>
             </View>
             <ActionSheet

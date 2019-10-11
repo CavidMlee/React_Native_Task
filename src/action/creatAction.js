@@ -12,7 +12,7 @@ export const newTask = (title, description, status, priority, deadlineAt, callba
         toTenantPerson: parsed.tenant.tenantPerson,
         title,
         description,
-        status: parseInt(status),
+        status: status,
         priority: priority,
         deadlineAt: deadlineAt ? deadlineAt : "",
         willProgressAt: "",
@@ -34,7 +34,7 @@ export const newTask = (title, description, status, priority, deadlineAt, callba
             else {
                 alert(JSON.stringify(resp.error))
             }
-        }).catch(e => alert(e))
+        }).catch((e) =>{alert(e), console.log('error create ',e)})
 
 
     }

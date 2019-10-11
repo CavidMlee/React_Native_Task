@@ -11,13 +11,16 @@ import EditScreen from '../Edit/edit'
 import Tabscreen from '../Tabs/tabs';
 import AuthLoadingScreen from './AuthLoadingScreen'
 
+const headerOptions = {
+  header: null
+}
+
 const AppStack = createStackNavigator({
   Tabs: {
     screen: Tabscreen,
-    navigationOptions: {
-      header: null
-    },
+    navigationOptions: headerOptions,
   },
+
   Main: {
     screen: MainScreen,
     navigationOptions: {
@@ -28,29 +31,25 @@ const AppStack = createStackNavigator({
       headerTintColor: 'black',
     },
   },
+
   Assigned: {
     screen: AssignedScreen,
-    navigationOptions: {
-      header: null
-    },
+    navigationOptions: headerOptions,
   },
+
   Expired: {
     screen: ExpiredScreen,
-    navigationOptions: {
-      header: null
-    },
+    navigationOptions: headerOptions,
   },
+
   Creat: {
     screen: CreatScreen,
-    navigationOptions: {
-      header: null
-    },
+    navigationOptions: headerOptions,
   },
+
   Edit: {
     screen: EditScreen,
-    navigationOptions: {
-      header: null
-    },
+    navigationOptions: headerOptions,
   }
 });
 

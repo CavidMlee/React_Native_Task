@@ -15,7 +15,7 @@ export const editTask = (id, title, description, status, priority, deadlineAt, c
                 toTenantPerson: parsed.tenant.tenantPerson,
                 title,
                 description,
-                status: parseInt(status),
+                status: status,
                 priority: priority,
                 deadlineAt: deadlineAt ? deadlineAt : "",
                 willProgressAt: "",
